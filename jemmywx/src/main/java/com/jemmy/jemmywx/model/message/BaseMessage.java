@@ -1,4 +1,4 @@
-package com.jemmy.jemmywx.model;
+package com.jemmy.jemmywx.model.message;
 
 /**
  * 消息实体基类
@@ -7,10 +7,25 @@ package com.jemmy.jemmywx.model;
 
 public class BaseMessage {
 
-    protected String ToUserName;
-    protected String FromUserName;
-    protected long CreateTime;
-    protected String MsgType;
+    // 接收方帐号（收到的OpenID）
+    private String ToUserName;
+    // 开发者微信号
+    private String FromUserName;
+    // 消息创建时间 （整型）
+    private long CreateTime;
+    // 消息类型
+    private String MsgType;
+
+    public long getMsgId() {
+        return MsgId;
+    }
+
+    public void setMsgId(long msgId) {
+        MsgId = msgId;
+    }
+
+    // 消息id，64位整型
+    private long MsgId;
 
     public BaseMessage() {
         super();

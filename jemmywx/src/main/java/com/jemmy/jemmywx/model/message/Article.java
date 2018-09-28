@@ -1,4 +1,4 @@
-package com.jemmy.jemmywx.model;
+package com.jemmy.jemmywx.model.message;
 
 /**
  * @Author: JemmyChen
@@ -7,6 +7,5 @@ package com.jemmy.jemmywx.model;
  * 创建时间:2018/9/28
  */
 
-public class Hello {
-	private String hell;
+public class Article {
 }
