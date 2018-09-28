@@ -1,4 +1,4 @@
 #运行jar ，退出不停止
 nohup java -jar jemmywx.jar&
 
-hello git
+hello git , i love u
