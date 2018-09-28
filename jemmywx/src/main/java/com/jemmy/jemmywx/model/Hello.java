@@ -8,4 +8,5 @@ package com.jemmy.jemmywx.model;
  */
 
 public class Hello {
+	private String hell;
 }
