@@ -10,6 +10,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -27,6 +29,8 @@ import java.util.Map;
  * 创建时间:
  */
 public class MessageUtil {
+
+    private static Logger logger = LoggerFactory.getLogger(MessageUtil.class);
     // 消息类型：文本
    public static  final  String MESSAGE_TYPE_TEXT = "text";
     // 消息类型：图片
@@ -82,7 +86,13 @@ public class MessageUtil {
         return map;
     }
 
-    public static String messageToXml(BaseMessage message,String aa) {
+    /**
+     * 将message转化成微信可接受的xml
+     * @param message
+     * @param
+     * @return
+     */
+    public static String baseMessageToXml(BaseMessage message) {
         String backXml = null;
         if (message != null) {
             if (message instanceof TextMessage) {
@@ -91,44 +101,10 @@ public class MessageUtil {
                 backXml = messageToXml((ImageMessage)message);
             } else if (message instanceof VoiceMessage) {
                 backXml = messageToXml((VoiceMessage)message);
-            } else if (message instanceof VideoMessage) {
-                backXml = messageToXml((VideoMessage)message);
-            } else if (message instanceof MusicMessage) {
-                backXml = messageToXml((MusicMessage)message);
-            } else if (message instanceof NewsMessage) {
-                backXml = messageToXml((NewsMessage)message);
             }
         }
         return backXml;
     }
-
-    /**
-     * 扩展xstream使其支持CDATA
-     */
-    private static XStream xstream = new XStream(new XppDriver() {
-        public HierarchicalStreamWriter createWriter(Writer out) {
-            return new PrettyPrintWriter(out) {
-                // 对所有xml节点的转换都增加CDATA标记
-                boolean cdata = true;
-
-                @SuppressWarnings("unchecked")
-                public void startNode(String name, Class clazz) {
-                    super.startNode(name, clazz);
-                }
-
-                protected void writeText(QuickWriter writer, String text) {
-                    if (cdata) {
-                        writer.write("<![CDATA[");
-                        writer.write(text);
-                        writer.write("]]>");
-                    } else {
-                        writer.write(text);
-                    }
-                }
-            };
-        }
-    });
-
 
     /**
      * 文本消息对象转换成xml
@@ -163,37 +139,35 @@ public class MessageUtil {
         return xstream.toXML(voiceMessage);
     }
 
-    /**
-     * 视频消息对象转换成xml
-     *
-     * @param videoMessage 视频消息对象
-     * @return xml
-     */
-    public static String messageToXml(VideoMessage videoMessage) {
-        xstream.alias("xml", videoMessage.getClass());
-        return xstream.toXML(videoMessage);
-    }
+
 
     /**
-     * 音乐消息对象转换成xml
-     *
-     * @param musicMessage 音乐消息对象
-     * @return xml
+     * 扩展xstream使其支持CDATA
      */
-    public static String messageToXml(MusicMessage musicMessage) {
-        xstream.alias("xml", musicMessage.getClass());
-        return xstream.toXML(musicMessage);
-    }
+    private static XStream xstream = new XStream(new XppDriver() {
+        public HierarchicalStreamWriter createWriter(Writer out) {
+            return new PrettyPrintWriter(out) {
+                // 对所有xml节点的转换都增加CDATA标记
+                boolean cdata = true;
 
-    /**
-     * 图文消息对象转换成xml
-     *
-     * @param newsMessage 图文消息对象
-     * @return xml
-     */
-    public static String messageToXml(NewsMessage newsMessage) {
-        xstream.alias("xml", newsMessage.getClass());
-        xstream.alias("item", new Article().getClass());
-        return xstream.toXML(newsMessage);
-    }
+                @SuppressWarnings("unchecked")
+                public void startNode(String name, Class clazz) {
+                    super.startNode(name, clazz);
+                }
+
+                protected void writeText(QuickWriter writer, String text) {
+                    if (cdata) {
+                        writer.write("<![CDATA[");
+                        writer.write(text);
+                        writer.write("]]>");
+                    } else {
+                        writer.write(text);
+                    }
+                }
+            };
+        }
+    });
+
+
+
 }

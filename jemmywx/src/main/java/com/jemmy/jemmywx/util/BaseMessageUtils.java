@@ -1,7 +1,6 @@
 package com.jemmy.jemmywx.util;
 
-import com.jemmy.jemmywx.model.message.BaseMessage;
-import com.jemmy.jemmywx.model.message.TextMessage;
+import com.jemmy.jemmywx.model.message.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -65,9 +64,14 @@ public class BaseMessageUtils {
         CreateTime = requestMap.get("CreateTime");
         // 事件类型
         eventType = requestMap.get("Event");
-        logger.info("--dopost--ToUserName:{} ,FromUserName:{} ,MsgType:{} ,Event:{}",toUserName,fromUserName,msgType,message,eventType);
+        logger.info("--BasemessageUtils--ToUserName:{} ,FromUserName:{} ,MsgType:{} ,message:{} ,eventType:{}",toUserName,fromUserName,msgType,message,eventType);
     }
 
+    /**
+     * 处理客户消息请求
+     * @param requestMap
+     * @return
+     */
     public static BaseMessage getRespMessage(Map<String, String> requestMap) {
 
         BaseMessage baseMessage = null;
@@ -76,14 +80,18 @@ public class BaseMessageUtils {
             // 文本消息
             if (msgType.equals(MessageUtil.MESSAGE_TYPE_TEXT)) {
                 baseMessage = getTextRespose();
+                logger.info("--BasemessageUtils--MESSAGE_TYPE_TEXT--baseMessage：{}",baseMessage.toString());
+
             }
             // 图片消息
             else if (msgType.equals(MessageUtil.MESSAGE_TYPE_IMAGE)) {
                 baseMessage = getImageRespose();
+                logger.info("--BasemessageUtils--MESSAGE_TYPE_IMAGE--ToUserName:{} ,FromUserName:{} ,MsgType:{} ,message:{} ,eventType:{}");
             }
             // 语音消息
             else if (msgType.equals(MessageUtil.MESSAGE_TYPE_VOICE)) {
                 baseMessage = getVoiceRespose();
+                logger.info("--BasemessageUtils--MESSAGE_TYPE_VOICE--ToUserName:{} ,FromUserName:{} ,MsgType:{} ,message:{} ,eventType:{}");
             }
             // 视频消息
             else if (msgType.equals(MessageUtil.MESSAGE_TYPE_VIDEO)) {
@@ -143,7 +151,6 @@ public class BaseMessageUtils {
         sb.append("您也可以给我留言，说说你的心里话！\n");
         sb.append("回复数字1调出此菜单");
         respContent = sb.toString();
-
         TextMessage textMessage = new TextMessage();
         textMessage.setToUserName(fromUserName);
         textMessage.setFromUserName(toUserName);
@@ -160,6 +167,8 @@ public class BaseMessageUtils {
      */
     protected static TextMessage getTextRespose() {
         TextMessage textMessage = new TextMessage();
+        respContent = "";
+        logger.info("进入--TextMessage--message：{}",message);
             try {
                 //处理文本类型,回复用户输入的内容
                 if (message.contains("天气")){
@@ -168,12 +177,10 @@ public class BaseMessageUtils {
                     String city= java.net.URLEncoder.encode(message, "utf-8");
                     if(!CityCodeUtil.getCityMap().containsKey(URLDecoder.decode(city))){
                         //如果城市名称输入错误，提示
-                        respContent = "\"请输入正确的城市名称如:光山天气\"";
-                        textMessage.setContent(respContent);
+                        respContent = "请输入正确的城市名称如:光山天气";
                     }else {
                         //存在城市，查询天气
                         String sb=  WeatherUtil.getWeatherInfo("http://wthrcdn.etouch.cn/weather_mini?city="+city);
-                        String count = "";
                         JSONObject jsonObject = JSONObject.fromObject(sb);
                         JSONObject data = (JSONObject) jsonObject.get("data");
                         JSONArray jsonArray =data. getJSONArray("forecast");
@@ -201,10 +208,12 @@ public class BaseMessageUtils {
                     }else {
                         respContent = "您的留言我已收到！您可回复数字'1'查看公众号菜单。";
                     }
-                    textMessage.setToUserName(fromUserName);
-                    textMessage.setFromUserName(toUserName);
-                    textMessage.setContent(respContent);
                 }
+                textMessage.setToUserName(fromUserName);
+                textMessage.setFromUserName(toUserName);
+                textMessage.setCreateTime(new Date().getTime());
+                textMessage.setMsgType(MessageUtil.MESSAGE_TYPE_TEXT);
+                textMessage.setContent(respContent.trim());
             }catch (Exception e){
 
             }
@@ -215,16 +224,16 @@ public class BaseMessageUtils {
      * 接收图片消息
      * @return
      */
-    protected static BaseMessage getImageRespose() {
-        return null;
+    protected static TextMessage getImageRespose() {
+        return  getNoRespose();
     }
 
     /**
      * 接收地理位置事件
      * @return
      */
-    protected static BaseMessage getEvent_LocationRespose()  {
-        return null;
+    protected static TextMessage getEvent_LocationRespose()  {
+        return  getNoRespose();
     }
 
     /**
@@ -232,15 +241,15 @@ public class BaseMessageUtils {
      * @return
      */
     protected static BaseMessage getEvent_ScanRespose()  {
-        return null;
+        return  getNoRespose();
     }
 
     /**
      * 接收链接消息
      * @return
      */
-    protected static BaseMessage getLinkRespose() {
-        return null;
+    protected static TextMessage getLinkRespose() {
+        return  getNoRespose();
     }
 
     /**
@@ -248,23 +257,23 @@ public class BaseMessageUtils {
      * @return
      */
     protected static BaseMessage getLocationRespose() {
-        return null;
+        return  getNoRespose();
     }
 
     /**
      * 接收视频消息
      * @return
      */
-    protected static BaseMessage getVideoRespose() {
-        return null;
+    protected static TextMessage getVideoRespose() {
+        return getNoRespose();
     }
 
     /**
      * 接收语音消息
      * @return
      */
-    protected static BaseMessage getVoiceRespose() {
-        return null;
+    protected static TextMessage getVoiceRespose() {
+        return getNoRespose();
     }
 
     /**
@@ -272,7 +281,7 @@ public class BaseMessageUtils {
      * @return
      */
     private static TextMessage getNoRespose() {
-        respContent = "未知的消息类型！";
+        respContent = "您的留言我已收到！您可回复数字'1'查看公众号菜单。";
         TextMessage textMessage = new TextMessage();
         textMessage.setToUserName(fromUserName);
         textMessage.setFromUserName(toUserName);

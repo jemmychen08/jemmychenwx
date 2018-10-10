@@ -1,7 +1,7 @@
 package com.jemmy.jemmywx.model.message;
 
 /**
- * 消息实体基类
+ * 回复消息实体基类
  * Create by JemmyChen on 2018/4/13
  */
 
@@ -15,17 +15,6 @@ public class BaseMessage {
     private long CreateTime;
     // 消息类型
     private String MsgType;
-
-    public long getMsgId() {
-        return MsgId;
-    }
-
-    public void setMsgId(long msgId) {
-        MsgId = msgId;
-    }
-
-    // 消息id，64位整型
-    private long MsgId;
 
     public BaseMessage() {
         super();
@@ -61,5 +50,15 @@ public class BaseMessage {
 
     public void setMsgType(String msgType) {
         MsgType = msgType;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseMessage{" +
+                "ToUserName='" + ToUserName + '\'' +
+                ", FromUserName='" + FromUserName + '\'' +
+                ", CreateTime=" + CreateTime +
+                ", MsgType='" + MsgType + '\'' +
+                '}';
     }
 }

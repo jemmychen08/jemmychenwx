@@ -26,7 +26,7 @@ public class JemmywxController {
         String timestamp =request.getParameter("timestamp");
         String nonce =request.getParameter("nonce");
         String echostr =request.getParameter("echostr");
-        logger.debug("linkToWX  signature:{} ,timestamp:{} ,nonce:{} ,echostr:{}",signature,timestamp,nonce,echostr);
+        logger.debug("linkToWX--signature:{} ,timestamp:{} ,nonce:{} ,echostr:{}",signature,timestamp,nonce,echostr);
         boolean flage=CheckUtil.checkSignature(signature,timestamp,nonce);
         if (flage){
             try {
@@ -54,10 +54,11 @@ public class JemmywxController {
             BaseMessage baseMessage = BaseMessageUtils.getRespMessage(map);
             if (baseMessage != null){
                 // 将消息对象转换成xml
-                message =MessageUtil.messageToXml(baseMessage,"a");
+                message =MessageUtil.baseMessageToXml(baseMessage);
             }
             out = response.getWriter();
             out.write(message);
+            logger.info("dopost--message:{}",message);
         } catch (IOException e) {
             e.printStackTrace();
         }finally {

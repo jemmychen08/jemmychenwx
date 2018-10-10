@@ -1,6 +1,5 @@
 package com.jemmy.jemmywx.model.message;
 
-import com.jemmy.jemmywx.model.message.BaseMessage;
 
 /**
  * 文本消息实体
@@ -12,6 +11,12 @@ public class TextMessage extends BaseMessage {
     //文本消息内容
     private String Content;
 
+    @Override
+    public String toString() {
+        return "TextMessage{" +
+                "Content='" + Content + '\'' +
+                '}';
+    }
 
     public TextMessage(){
         super();
