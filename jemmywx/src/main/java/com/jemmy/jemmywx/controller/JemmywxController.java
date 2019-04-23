@@ -26,7 +26,7 @@ public class JemmywxController {
         String timestamp =request.getParameter("timestamp");
         String nonce =request.getParameter("nonce");
         String echostr =request.getParameter("echostr");
-        logger.debug("linkToWX--signature:{} ,timestamp:{} ,nonce:{} ,echostr:{}",signature,timestamp,nonce,echostr);
+        logger.info("linkToWX--signature:{} ,timestamp:{} ,nonce:{} ,echostr:{}",signature,timestamp,nonce,echostr);
         boolean flage=CheckUtil.checkSignature(signature,timestamp,nonce);
         if (flage){
             try {
@@ -37,7 +37,6 @@ public class JemmywxController {
         }
     }
     @RequestMapping("/hello.do")
-    @ResponseBody
     public String hello(HttpServletRequest request, HttpServletResponse response){
         return "hello,大帅比！";
     }
