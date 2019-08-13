@@ -6,4 +6,13 @@ package com.jemmy.jemmywx.controller;
 
 public class JemmywxTest {
 
+    public static void main(String[] args) {
+        String stu = null;
+        System.out.println(stu);
+        /*if(stu == null){
+            throw new NullPointerException();
+        }*/
+
+    }
+
 }
